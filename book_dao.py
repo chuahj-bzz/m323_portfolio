@@ -2,6 +2,7 @@ import sqlite3
 from functools import reduce
 from book import Book, is_read_status
 
+
 class BookDao:
     def __init__(self, db_file):
         self.db_file = db_file
@@ -54,3 +55,14 @@ class BookDao:
             cursor.execute("SELECT * FROM books WHERE book_id=?", (book_id,))
             row = cursor.fetchone()
             return Book(*row) if row else None
+
+    # closure
+    def count_books_by_author(self, author: str):
+        def is_author(book: Book) -> bool:
+            return book.author == author
+
+        def count_books() -> int:
+            books = self.get_all_books()
+            return len(list(filter(is_author, books)))
+
+        return count_books
