@@ -66,3 +66,18 @@ class BookDao:
             return len(list(filter(is_author, books)))
 
         return count_books
+
+    def get_books_by_status_and_author(self, is_read: bool, author: str):
+        books = self.get_all_books()
+        return list(filter(lambda book: book.is_read == is_read and book.author == author, books))
+
+    def sort_books_by(self, criteria: str, descending: bool = False):
+        books = self.get_all_books()
+        if criteria == 'title':
+            return sorted(books, key=lambda book: book.title, reverse=descending)
+        elif criteria == 'author':
+            return sorted(books, key=lambda book: book.author, reverse=descending)
+        elif criteria == 'genre':
+            return sorted(books, key=lambda book: book.genre, reverse=descending)
+        else:
+            raise ValueError(f"Sorting by {criteria} is not supported.")

@@ -57,17 +57,27 @@ def count_books():
     return jsonify({'book_count': count}), 200
 
 
-
 # pfad z.B /books/count_by_author?author=asdfasdf
 @book_blueprint.route('/books/count_by_author', methods=['GET'])
 def count_books_by_author():
-    # Autor von der Anfrage holen
     author = request.args.get('author')
 
     if author:
         # Die Closure aufrufen, um die Anzahl der Bücher des Autors zu zählen
         count_books_for_author = dao.count_books_by_author(author)
-        count = count_books_for_author()  # Closure ausführen
+        count = count_books_for_author()
         return jsonify({'book_count': count, 'author': author}), 200
     else:
         return jsonify({'message': 'Author parameter is missing'}), 400
+
+
+@book_blueprint.route('/books/filter', methods=['GET'])
+def filter_books():
+    is_read = request.args.get('is_read', type=bool)
+    author = request.args.get('author', type=str)
+
+    if is_read is not None and author:
+        filtered_books = dao.get_books_by_status_and_author(is_read, author)
+        return jsonify([book.__dict__ for book in filtered_books]), 200
+    else:
+        return jsonify({'message': 'Please provide both is_read and author parameters'}), 400
