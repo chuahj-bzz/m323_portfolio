@@ -81,3 +81,26 @@ def filter_books():
         return jsonify([book.__dict__ for book in filtered_books]), 200
     else:
         return jsonify({'message': 'Please provide both is_read and author parameters'}), 400
+@book_blueprint.route('/books/uppercase_titles', methods=['GET'])
+def get_uppercase_titles():
+    titles = dao.get_uppercase_titles()
+    return jsonify(titles), 200
+
+@book_blueprint.route('/books/read_books_count', methods=['GET'])
+def count_read_books():
+    count = dao.count_read_books()
+    return jsonify({'read_books_count': count}), 200
+
+@book_blueprint.route('/books/uppercase_read_titles_count', methods=['GET'])
+def get_uppercase_read_titles_count():
+    count = dao.get_uppercase_read_titles_count()
+    return jsonify({'uppercase_read_titles_count': count}), 200
+
+@book_blueprint.route('/books/read_books_count_by_genre', methods=['GET'])
+def get_read_books_count_by_genre():
+    genre = request.args.get('genre')
+    if genre:
+        count = dao.get_read_books_count_by_genre(genre)
+        return jsonify({'read_books_count_by_genre': count, 'genre': genre}), 200
+    else:
+        return jsonify({'message': 'Genre parameter is missing'}), 400
