@@ -71,6 +71,7 @@ class BookDao:
         books = self.get_all_books()
         return list(filter(lambda book: book.is_read == is_read and book.author == author, books))
 
+    # sorted
     def sort_books_by(self, criteria: str, descending: bool = False):
         books = self.get_all_books()
         if criteria == 'title':
@@ -81,3 +82,29 @@ class BookDao:
             return sorted(books, key=lambda book: book.genre, reverse=descending)
         else:
             raise ValueError(f"Sorting by {criteria} is not supported.")
+
+    # b4 kompetenze
+    def get_read_books(self):
+        books = self.get_all_books()
+        return list(filter(lambda book: book.is_read, books))
+
+    # Map: Alle Buchtitel in Großbuchstaben umwandeln
+    def get_uppercase_titles(self):
+        books = self.get_all_books()
+        return list(map(lambda book: book.title.upper(), books))
+
+    # Reduce: Gesamtanzahl der gelesenen Bücher zählen
+    def count_read_books(self):
+        books = self.get_all_books()
+        return reduce(lambda count, book: count + (1 if book.is_read else 0), books, 0)
+
+    def get_uppercase_read_titles_count(self):
+        books = self.get_all_books()
+        read_books = filter(lambda book: book.is_read, books)
+        uppercase_titles = map(lambda book: book.title.upper(), read_books)
+        return reduce(lambda count, _: count + 1, uppercase_titles, 0)
+
+    def get_read_books_count_by_genre(self, genre):
+        books = self.get_all_books()
+        read_books_in_genre = filter(lambda book: book.is_read and book.genre == genre, books)
+        return reduce(lambda count, _: count + 1, read_books_in_genre, 0)
